@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Map with GeoJSON Features</title>
+    <title>Map with GeoJSON Features and Device Location</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <style>
         #map {
@@ -19,7 +19,7 @@
     </style>
 </head>
 <body>
-    <h1>Map with GeoJSON Features</h1>
+    <h1>Map with GeoJSON Features and Device Location</h1>
     <div id="map"></div> <!-- Leaflet map will be rendered here -->
     
     <div id="layer-list" class="layer-info"></div> <!-- List of features' details -->
@@ -116,6 +116,30 @@
             fetchDataAndCache(); // Fetch data from API and cache it
         }
 
+        // Function to add the user's current location to the map
+        function addUserLocation() {
+            map.locate({ setView: true, maxZoom: 16 }); // Automatically pan to user's location
+
+            // Event listener when location is found
+            map.on('locationfound', function (e) {
+                var radius = e.accuracy / 2;
+
+                // Add marker for user's location
+                L.marker(e.latlng).addTo(map)
+                    .bindPopup("You are within " + radius + " meters from this point").openPopup();
+
+                // Add a circle to indicate the accuracy of the location
+                L.circle(e.latlng, radius).addTo(map);
+            });
+
+            // Event listener when location is not found
+            map.on('locationerror', function () {
+                alert("Unable to find your location.");
+            });
+        }
+
+        // Call the function to add the user's location to the map
+        addUserLocation();
     </script>
 </body>
 </html>
