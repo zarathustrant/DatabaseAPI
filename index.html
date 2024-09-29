@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map with GeoJSON Features</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        #map {
+            width: 100%;
+            height: 600px;
+        }
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .layer-info {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Map with GeoJSON Features</h1>
+    <div id="map"></div> <!-- Leaflet map will be rendered here -->
+    
+    <div id="layer-list" class="layer-info"></div> <!-- List of features' details -->
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        const CACHE_EXPIRATION = 3600000; // 1 hour (in milliseconds)
+        const CACHE_KEY = 'geojson_features';
+
+        // Initialize the Leaflet map with tap enabled
+        var map = L.map('map', {
+            center: [10.5264, 7.4386], // Initial coordinates
+            zoom: 14,
+            tap: true, // Enables tap interaction for touch devices
+            tapTolerance: 10 // Optional, adjusts tolerance for touch precision
+        });
+
+        // Add a tile layer (OpenStreetMap)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Function to check if the data in localStorage is valid
+        function isCacheValid() {
+            const cachedData = localStorage.getItem(CACHE_KEY);
+            const cacheTime = localStorage.getItem(CACHE_KEY + '_timestamp');
+            if (!cachedData || !cacheTime) return false;
+            return (new Date().getTime() - cacheTime) < CACHE_EXPIRATION;
+        }
+
+        // Function to load GeoJSON data and display it on the map
+        function loadGeoJsonData(data) {
+            const layerList = document.getElementById('layer-list');
+            layerList.innerHTML = ''; // Clear existing content
+
+            // Loop through each feature in the JSON data and plot on the map
+            data.forEach((layer, index) => {
+                // Extract coordinates and create a marker
+                const coordinates = layer.geometry.coordinates;
+                const marker = L.marker([coordinates[1], coordinates[0]]).addTo(map);
+
+                // Dynamically generate popup content by iterating over properties
+                let popupContent = `<b>Coordinates:</b> [${coordinates[1]}, ${coordinates[0]}]<br>`;
+                for (let property in layer.properties) {
+                    popupContent += `<b>${property}:</b> ${layer.properties[property] || "N/A"}<br>`;
+                }
+
+                // Add a click event to the marker to show the popup
+                marker.on('click', () => {
+                    marker.bindPopup(popupContent).openPopup();
+                });
+
+                // Create a div for each feature to show details below the map
+                const featureDiv = document.createElement('div');
+                featureDiv.classList.add('feature');
+                
+                // Display feature properties in the list below the map
+                let featureDetails = `<h3>Layer ${index + 1}</h3>`;
+                featureDetails += `<p><b>_id:</b> ${layer._id}</p>`;
+                featureDetails += `<p><b>Coordinates:</b> [${coordinates[1]}, ${coordinates[0]}]</p>`;
+                for (let property in layer.properties) {
+                    featureDetails += `<p><b>${property}:</b> ${layer.properties[property] || "N/A"}</p>`;
+                }
+                
+                featureDiv.innerHTML = featureDetails;
+
+                // Append to the layer list
+                layerList.appendChild(featureDiv);
+            });
+        }
+
+        // Function to fetch data from the API and cache it
+        function fetchDataAndCache() {
+            fetch('https://databaseapi-t454.onrender.com/features')
+                .then(response => response.json())
+                .then(data => {
+                    localStorage.setItem(CACHE_KEY, JSON.stringify(data)); // Cache the data
+                    localStorage.setItem(CACHE_KEY + '_timestamp', new Date().getTime()); // Cache the timestamp
+                    loadGeoJsonData(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    const layerList = document.getElementById('layer-list');
+                    layerList.innerHTML = `<p class="error">Error fetching data: ${error.message}</p>`;
+                });
+        }
+
+        // Main logic: Check if the data is already cached and valid
+        if (isCacheValid()) {
+            const cachedData = JSON.parse(localStorage.getItem(CACHE_KEY));
+            loadGeoJsonData(cachedData); // Load data from cache
+        } else {
+            fetchDataAndCache(); // Fetch data from API and cache it
+        }
+
+    </script>
+</body>
+</html>
