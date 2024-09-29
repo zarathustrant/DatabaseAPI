@@ -5,6 +5,8 @@ import uuid
 # Initialize Flask app
 app = Flask(__name__)
 
+CORS(app)
+
 # MongoDB connection (update with your own connection string)
 client = MongoClient('mongodb+srv://zarathustrant:aCRmg2RAJcpoWMKo@aerys.lmphm.mongodb.net/?retryWrites=true&w=majority&appName=Aerys')
 db = client['Pipeline']  # Replace with your database name
