@@ -56,35 +56,29 @@ def add_feature():
     
     return jsonify(format_feature(new_feature)), 201
 
-# Route to update an existing feature by ID (full or partial)
-@app.route('/features/<string:feature_id>', methods=['PUT'])
-def update_feature(feature_id):
-    data = request.json
+# Route to update a feature by ID (PUT)
+@app.route('/features/<id>', methods=['PUT'])
+def update_feature(id):
+    data = request.json  # Get the JSON data from the request
+    updated_properties = data.get("properties", {})  # Extract the updated properties from the request
 
-    # Find the feature by ID
-    feature = collection.find_one({"_id": feature_id})
-    if not feature:
-        abort(404, description="Feature not found")
+    if not updated_properties:
+        return jsonify({"error": "No properties provided"}), 400
 
-    # Prepare the updated feature with optional new data for each field
-    updated_feature = {
-        "type": data.get("type", feature["type"]),  # Update type if provided, else retain the old value
-        "properties": {  # Update individual properties if provided
-            "Feature Type": data.get("properties", {}).get("Feature Type", feature["properties"].get("Feature Type")),
-            "Status": data.get("properties", {}).get("Status", feature["properties"].get("Status")),
-            "Operator": data.get("properties", {}).get("Operator", feature["properties"].get("Operator")),
-            "Last Inspection Date": data.get("properties", {}).get("Last Inspection Date", feature["properties"].get("Last Inspection Date")),
-            # You can add more fields here for specific attributes
-        },
-        "geometry": data.get("geometry", feature["geometry"])  # Update geometry if provided
-    }
+    try:
+        # Update the feature in the database
+        result = mongo.db.features.update_one(
+            {"_id": ObjectId(id)},  # Match by the feature's MongoDB ObjectId
+            {"$set": {"properties": updated_properties}}  # Update the properties field
+        )
 
-    # Perform the update in MongoDB
-    collection.update_one({"_id": feature_id}, {"$set": updated_feature})
+        if result.matched_count == 0:
+            return jsonify({"error": "Feature not found"}), 404
 
-    # Fetch the updated feature and return
-    updated_feature = collection.find_one({"_id": feature_id})
-    return jsonify(format_feature(updated_feature)), 200
+        return jsonify({"message": "Feature updated successfully"})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # Route to delete a feature by ID
 @app.route('/features/<string:feature_id>', methods=['DELETE'])
