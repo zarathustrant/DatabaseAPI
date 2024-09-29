@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, abort
+from flask import Flask, jsonify, request, abort, send_file
 from pymongo import MongoClient
 from flask_cors import CORS
 import uuid
@@ -7,6 +7,11 @@ import uuid
 app = Flask(__name__)
 
 CORS(app)
+
+# Route to serve index.html
+@app.route('/')
+def serve_index():
+    return send_file('index.html')
 
 # MongoDB connection (update with your own connection string)
 client = MongoClient('mongodb+srv://zarathustrant:aCRmg2RAJcpoWMKo@aerys.lmphm.mongodb.net/?retryWrites=true&w=majority&appName=Aerys')
