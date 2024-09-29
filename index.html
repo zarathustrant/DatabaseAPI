@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Map with GeoJSON Features and Device Location</title>
+    <title>Map with GeoJSON Features, Device Location, and Editable Properties</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <style>
         #map {
@@ -16,10 +16,14 @@
         .layer-info {
             margin-top: 20px;
         }
+        input, select {
+            width: 100%;
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 <body>
-    <h1>Map with GeoJSON Features and Device Location</h1>
+    <h1>Map with Editable GeoJSON Features and Device Location</h1>
     <div id="map"></div> <!-- Leaflet map will be rendered here -->
     
     <div id="layer-list" class="layer-info"></div> <!-- List of features' details -->
@@ -28,6 +32,7 @@
     <script>
         const CACHE_EXPIRATION = 3600000; // 1 hour (in milliseconds)
         const CACHE_KEY = 'geojson_features';
+        const API_URL = 'https://databaseapi-t454.onrender.com/features'; // Replace with your API endpoint
 
         // Initialize the Leaflet map with tap enabled
         var map = L.map('map', {
@@ -62,15 +67,35 @@
                 const coordinates = layer.geometry.coordinates;
                 const marker = L.marker([coordinates[1], coordinates[0]]).addTo(map);
 
-                // Dynamically generate popup content by iterating over properties
-                let popupContent = `<b>Coordinates:</b> [${coordinates[1]}, ${coordinates[0]}]<br>`;
+                // Dynamically generate an editable form popup content
+                let popupContent = `<form id="edit-form-${index}">`;
                 for (let property in layer.properties) {
-                    popupContent += `<b>${property}:</b> ${layer.properties[property] || "N/A"}<br>`;
+                    popupContent += `<label for="${property}"><b>${property}</b>:</label><br>`;
+                    popupContent += `<input type="text" id="${property}" name="${property}" value="${layer.properties[property] || ''}" /><br>`;
                 }
+                popupContent += `<button type="submit">Save</button></form>`;
 
                 // Add a click event to the marker to show the popup
-                marker.on('click', () => {
-                    marker.bindPopup(popupContent).openPopup();
+                marker.bindPopup(popupContent);
+
+                // Handle form submission to update the properties
+                marker.on('popupopen', function () {
+                    const form = document.getElementById(`edit-form-${index}`);
+                    form.addEventListener('submit', function (event) {
+                        event.preventDefault();
+
+                        // Collect updated data from the form
+                        const updatedProperties = {};
+                        for (let property in layer.properties) {
+                            updatedProperties[property] = form.elements[property].value;
+                        }
+
+                        // Update the feature properties in the database via the API
+                        updateFeatureInDatabase(layer._id, updatedProperties);
+
+                        // Update the marker's popup content with the new values
+                        marker.bindPopup(createPopupContent(updatedProperties, coordinates)).openPopup();
+                    });
                 });
 
                 // Create a div for each feature to show details below the map
@@ -92,9 +117,27 @@
             });
         }
 
+        // Function to send the updated feature to the API
+        function updateFeatureInDatabase(id, updatedProperties) {
+            fetch(`${API_URL}/${id}`, {
+                method: 'PUT', // Change to POST if needed based on your API design
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ properties: updatedProperties })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Feature updated successfully');
+            })
+            .catch(error => {
+                console.error('Error updating feature:', error);
+            });
+        }
+
         // Function to fetch data from the API and cache it
         function fetchDataAndCache() {
-            fetch('https://databaseapi-t454.onrender.com/features')
+            fetch(API_URL)
                 .then(response => response.json())
                 .then(data => {
                     localStorage.setItem(CACHE_KEY, JSON.stringify(data)); // Cache the data
@@ -140,6 +183,7 @@
 
         // Call the function to add the user's location to the map
         addUserLocation();
+
     </script>
 </body>
 </html>
