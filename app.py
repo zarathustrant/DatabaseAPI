@@ -66,6 +66,10 @@ def update_feature(id):
         return jsonify({"error": "No properties provided"}), 400
 
     try:
+        # Print the update to the server console
+        print(f"Updating feature with ID {id} with the following properties:")
+        print(updated_properties)
+
         # Update the feature in the database
         result = mongo.db.features.update_one(
             {"_id": ObjectId(id)},  # Match by the feature's MongoDB ObjectId
@@ -79,6 +83,7 @@ def update_feature(id):
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+        
 
 # Route to delete a feature by ID
 @app.route('/features/<string:feature_id>', methods=['DELETE'])
