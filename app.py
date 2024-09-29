@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, abort
 from pymongo import MongoClient
+from flask_cors import CORS
 import uuid
 
 # Initialize Flask app
