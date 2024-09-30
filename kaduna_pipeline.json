@@ -1,0 +1,402 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "_id": "1",
+            "type": "Feature",
+            "properties": {
+                "Feature Type": "Compressor Station",
+                "Station ID": "CS_1",
+                "Capacity": "1412 m\u00b3/day",
+                "Status": "Maintenance",
+                "Power Source": "Gas turbine",
+                "Last Maintenance Date": "2024-09-6",
+                "Operator": "Operator_1"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.4386,
+                    10.5264
+                ]
+            }
+        },
+        {
+            "_id": "2",
+            "type": "Feature",
+            "properties": {
+                "Feature Type": "Monitoring Station",
+                "Station ID": "MS_2",
+                "Sensor Type": "Pressure",
+                "Status": "Offline",
+                "Reading Interval": "Hourly",
+                "Communication Method": "Cellular",
+                "Last Calibration Date": "2024-09-23"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.4386,
+                    10.5273009009009
+                ]
+            }
+        },
+        {
+            "_id": "3",
+            "type": "Feature",
+            "properties": {
+                "Feature Type": "Pump Station",
+                "Station ID": "PS_3",
+                "Flow Rate": "1579 barrels/day",
+                "Status": "Active",
+                "Pump Type": "Centrifugal",
+                "Power Source": "Diesel",
+                "Operating Pressure": "924 PSI"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.4386,
+                    10.528201801801803
+                ]
+            }
+        },
+        {
+            "_id": "4",
+            "type": "Feature",
+            "properties": {
+                "Feature Type": "Monitoring Station",
+                "Station ID": "MS_4",
+                "Sensor Type": "Temperature",
+                "Status": "Offline",
+                "Reading Interval": "5 min",
+                "Communication Method": "Satellite",
+                "Last Calibration Date": "2024-09-20"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.4386,
+                    10.529102702702703
+                ]
+            }
+        },
+        {
+            "_id": "5",
+            "type": "Feature",
+            "properties": {
+                "Feature Type": "Inspection Point",
+                "Inspection Point ID": "IP_5",
+                "Type": "Pig Receiver",
+                "Status": "Maintenance",
+                "Last Inspection Date": "2024-09-1",
+                "Next Scheduled Inspection": "2024-10-24"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.4386,
+                    10.530003603603605
+                ]
+            }
+        },
+        {
+            "_id": "6",
+            "type": "Feature",
+            "properties": {
+                "Feature Type": "Pump Station",
+                "Station ID": "PS_6",
+                "Flow Rate": "1827 barrels/day",
+                "Status": "Active",
+                "Pump Type": "Centrifugal",
+                "Power Source": "Electric",
+                "Operating Pressure": "819 PSI"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.4386,
+                    10.530904504504505
+                ]
+            }
+        },
+        {
+            "_id": "7",
+            "type": "Feature",
+            "properties": {
+                "Feature Type": "Storage Tank",
+                "Tank ID": "ST_7",
+                "Capacity": "41346 barrels",
+                "Status": "Full",
+                "Product Type": "Crude oil",
+                "Last Inspection Date": "2024-09-9",
+                "Next Scheduled Inspection": "2024-10-28"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.4386,
+                    10.531805405405406
+                ]
+            }
+        },
+        {
+            "_id": "8",
+            "type": "Feature",
+            "properties": {
+                "Feature Type": "Monitoring Station",
+                "Station ID": "MS_8",
+                "Sensor Type": "Pressure",
+                "Status": "Active",
+                "Reading Interval": "5 min",
+                "Communication Method": "Cellular",
+                "Last Calibration Date": "2024-09-21"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.4386,
+                    10.532706306306308
+                ]
+            }
+        },
+        {
+            "_id": "9",
+            "type": "Feature",
+            "properties": {
+                "Feature Type": "Compressor Station",
+                "Station ID": "CS_9",
+                "Capacity": "3906 m\u00b3/day",
+                "Status": "Inactive",
+                "Power Source": "Electric",
+                "Last Maintenance Date": "2024-09-28",
+                "Operator": "Operator_9"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.4386,
+                    10.533607207207208
+                ]
+            }
+        },
+        {
+            "_id": "10",
+            "type": "Feature",
+            "properties": {
+                "Feature Type": "Pump Station",
+                "Station ID": "PS_10",
+                "Flow Rate": "894 barrels/day",
+                "Status": "Active",
+                "Pump Type": "Reciprocating",
+                "Power Source": "Electric",
+                "Operating Pressure": "127 PSI"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.4386,
+                    10.534508108108108
+                ]
+            }
+        },
+        {
+            "_id": "11",
+            "type": "Feature",
+            "properties": {
+                "Feature Type": "Monitoring Station",
+                "Station ID": "MS_11",
+                "Sensor Type": "Pressure",
+                "Status": "Offline",
+                "Reading Interval": "Hourly",
+                "Communication Method": "Cellular",
+                "Last Calibration Date": "2024-09-29"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.4386,
+                    10.53540900900901
+                ]
+            }
+        },
+        {
+            "_id": "12",
+            "type": "Feature",
+            "properties": {
+                "Feature Type": "Monitoring Station",
+                "Station ID": "MS_12",
+                "Sensor Type": "Temperature",
+                "Status": "Offline",
+                "Reading Interval": "1 min",
+                "Communication Method": "Cellular",
+                "Last Calibration Date": "2024-09-9"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.4386,
+                    10.53630990990991
+                ]
+            }
+        },
+        {
+            "_id": "13",
+            "type": "Feature",
+            "properties": {
+                "Feature Type": "Monitoring Station",
+                "Station ID": "MS_13",
+                "Sensor Type": "Temperature",
+                "Status": "Offline",
+                "Reading Interval": "1 min",
+                "Communication Method": "Cellular",
+                "Last Calibration Date": "2024-09-6"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.4386,
+                    10.537210810810812
+                ]
+            }
+        },
+        {
+            "_id": "14",
+            "type": "Feature",
+            "properties": {
+                "Feature Type": "Inspection Point",
+                "Inspection Point ID": "IP_14",
+                "Type": "Pig Receiver",
+                "Status": "Inactive",
+                "Last Inspection Date": "2024-09-28",
+                "Next Scheduled Inspection": "2024-10-6"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.4386,
+                    10.538111711711712
+                ]
+            }
+        },
+        {
+            "_id": "15",
+            "type": "Feature",
+            "properties": {
+                "Feature Type": "Inspection Point",
+                "Inspection Point ID": "IP_15",
+                "Type": "Pig Launcher",
+                "Status": "Active",
+                "Last Inspection Date": "2024-09-1",
+                "Next Scheduled Inspection": "2024-10-19"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.4386,
+                    10.539012612612613
+                ]
+            }
+        },
+        {
+            "_id": "16",
+            "type": "Feature",
+            "properties": {
+                "Feature Type": "Valve Station",
+                "Valve ID": "VS_16",
+                "Type": "Gate valve",
+                "Status": "Open",
+                "Pressure Rating": "966 PSI",
+                "Last Inspection Date": "2024-09-15",
+                "Operator": "Operator_16"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.4386,
+                    10.539913513513515
+                ]
+            }
+        },
+        {
+            "_id": "17",
+            "type": "Feature",
+            "properties": {
+                "Feature Type": "Valve Station",
+                "Valve ID": "VS_17",
+                "Type": "Ball valve",
+                "Status": "Closed",
+                "Pressure Rating": "1052 PSI",
+                "Last Inspection Date": "2024-09-23",
+                "Operator": "Operator_17"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.4386,
+                    10.540814414414415
+                ]
+            }
+        },
+        {
+            "_id": "18",
+            "type": "Feature",
+            "properties": {
+                "Feature Type": "Compressor Station",
+                "Station ID": "CS_18",
+                "Capacity": "4363 m\u00b3/day",
+                "Status": "Maintenance",
+                "Power Source": "Gas turbine",
+                "Last Maintenance Date": "2024-09-12",
+                "Operator": "Operator_18"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.4386,
+                    10.541715315315315
+                ]
+            }
+        },
+        {
+            "_id": "19",
+            "type": "Feature",
+            "properties": {
+                "Feature Type": "Cathodic Protection Station",
+                "Station ID": "CPS_19",
+                "Protection Type": "Impressed Current",
+                "Status": "Maintenance",
+                "Anode Type": "Aluminum",
+                "Last Maintenance Date": "2024-09-27",
+                "Potential Reading": "2.55 V"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.4386,
+                    10.542616216216217
+                ]
+            }
+        },
+        {
+            "_id": "20",
+            "type": "Feature",
+            "properties": {
+                "Feature Type": "Monitoring Station",
+                "Station ID": "MS_20",
+                "Sensor Type": "Flow rate",
+                "Status": "Active",
+                "Reading Interval": "Hourly",
+                "Communication Method": "Satellite",
+                "Last Calibration Date": "2024-09-8"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.4386,
+                    10.543517117117117
+                ]
+            }
+        }
+    ]
+}
