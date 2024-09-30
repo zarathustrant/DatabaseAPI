@@ -32,7 +32,7 @@
     <script>
         const CACHE_EXPIRATION = 3600000; // 1 hour (in milliseconds)
         const CACHE_KEY = 'geojson_features';
-        const API_URL = 'https://databaseapi-t454.onrender.com/features'; // Replace with your API endpoint
+        const API_URL = 'https://databaseapi-t454.onrender.com/features'; // Replace with your actual API endpoint
 
         // Initialize the Leaflet map with tap enabled
         var map = L.map('map', {
@@ -94,7 +94,11 @@
                         updateFeatureInDatabase(layer._id, updatedProperties);
 
                         // Update the marker's popup content with the new values
-                        marker.bindPopup(createPopupContent(updatedProperties, coordinates)).openPopup();
+                        let updatedPopupContent = `<b>Coordinates:</b> [${coordinates[1]}, ${coordinates[0]}]<br>`;
+                        for (let property in updatedProperties) {
+                            updatedPopupContent += `<b>${property}:</b> ${updatedProperties[property]}<br>`;
+                        }
+                        marker.setPopupContent(updatedPopupContent);
                     });
                 });
 
@@ -120,7 +124,7 @@
         // Function to send the updated feature to the API
         function updateFeatureInDatabase(id, updatedProperties) {
             fetch(`${API_URL}/${id}`, {
-                method: 'PUT', // Change to POST if needed based on your API design
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -129,6 +133,7 @@
             .then(response => response.json())
             .then(data => {
                 alert('Feature updated successfully');
+                localStorage.removeItem(CACHE_KEY); // Invalidate cache to reload updated data
             })
             .catch(error => {
                 console.error('Error updating feature:', error);
