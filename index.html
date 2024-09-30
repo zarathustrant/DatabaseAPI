@@ -3,33 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Map with Google Earth Hybrid and Device Location</title>
+    <title>Field Worker</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBB7XbI-mEC08WpoBUeeIcGj9UcQprIs1o"></script> <!-- Replace with your API Key -->
-    <script src="https://unpkg.com/leaflet.gridlayer.googlemutant@latest/Leaflet.GoogleMutant.js"></script> <!-- Google Layer Plugin -->
     <style>
+        /* General Dark Theme with Lemon Accents */
+        body {
+            background-color: #1c1c1e;
+            color: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            color: #f4f4f4;
+            text-align: center;
+            padding: 20px 0;
+        }
+
         #map {
             width: 100%;
             height: 600px;
+            margin-bottom: 20px;
+            border: 2px solid #f4f4f4;
         }
-        body {
-            font-family: Arial, sans-serif;
-        }
-        input, select {
+
+        input, select, button {
             width: 100%;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #333;
+            color: #f4f4f4;
+            border: 1px solid #f4f4f4;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #f4f4f4;
+            color: #1c1c1e;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #e5e500;
+            color: #1c1c1e;
+        }
+
+        label {
+            color: #e5e500; /* Lemon accent for form labels */
+        }
+
+        .leaflet-container {
+            background-color: #1c1c1e; /* Dark map background */
+        }
+
+        .leaflet-popup-content-wrapper {
+            background-color: #2c2c2e;
+            color: #f4f4f4;
+        }
+
+        .leaflet-popup-tip {
+            background-color: #2c2c2e;
+        }
+
+        .leaflet-popup-content button {
+            background-color: #e5e500; /* Lemon accent for popup buttons */
+            color: #1c1c1e;
+            border: none;
+            padding: 5px;
+            border-radius: 3px;
+        }
+
+        .leaflet-popup-content button:hover {
+            background-color: #d4d400;
         }
     </style>
 </head>
 <body>
-    <h1>Map with Google Earth Hybrid and Device Location</h1>
+    <h1>Field Worker</h1>
     <div id="map"></div> <!-- Leaflet map will be rendered here -->
 
     <script>
         const CACHE_EXPIRATION = 3600000; // 1 hour (in milliseconds)
         const CACHE_KEY = 'geojson_features';
-        const API_URL = 'https://databaseapi-t454.onrender.com/features'; // Replace with your actual API endpoint
+        const API_URL = 'https://databaseapi-t454.onrender.com/features'; // Updated API URL
 
         // Initialize the Leaflet map with Google Earth Hybrid as the base layer
         var map = L.map('map', {
@@ -39,10 +96,12 @@
             tapTolerance: 10 // Optional, adjusts tolerance for touch precision
         });
 
-        // Google Earth Hybrid layer
-        var googleHybrid = L.gridLayer.googleMutant({
-            type: 'hybrid' // Set to 'hybrid' for Google Earth Hybrid
-        }).addTo(map);
+        // Google Earth Hybrid layer (Direct Tile URL approach)
+        var googleSatHybrid = L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+            attribution: '&copy; <a href="https://www.google.com/earth/">Google Earth</a>',
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+            maxZoom: 19
+        }).addTo(map); // Add the layer to the map
 
         // Function to check if the data in localStorage is valid
         function isCacheValid() {
