@@ -8,31 +8,37 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <style>
         /* General Dark Theme with Lemon Accents */
-        body {
+        body, html {
+            margin: 0;
+            padding: 0;
             background-color: #1c1c1e;
             color: #f4f4f4;
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+            height: 100%;
         }
 
-
+        h1 {
+            color: #f4f4f4;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 1.5em;
+        }
 
         #map {
             width: 100%;
-            height: 100vh; /* 100% of the viewport height for the map */
-         
+            height: 100vh; /* Use full viewport height */
+            margin: 0;
         }
 
         input, select, button {
             width: 100%;
             margin-bottom: 10px;
-            padding: 15px; /* Larger padding for easier touch interaction */
+            padding: 15px;
             background-color: #333;
             color: #f4f4f4;
             border: 1px solid #f4f4f4;
             border-radius: 5px;
-            font-size: 1em; /* Increase font size for mobile readability */
+            font-size: 1em;
         }
 
         button {
@@ -48,12 +54,12 @@
         }
 
         label {
-            color: #e5e500; /* Lemon accent for form labels */
-            font-size: 0.9em; /* Slightly smaller label size */
+            color: #e5e500;
+            font-size: 0.9em;
         }
 
         .leaflet-container {
-            background-color: #1c1c1e; /* Dark map background */
+            background-color: #1c1c1e;
         }
 
         .leaflet-popup-content-wrapper {
@@ -66,7 +72,7 @@
         }
 
         .leaflet-popup-content button {
-            background-color: #e5e500; /* Lemon accent for popup buttons */
+            background-color: #e5e500;
             color: #1c1c1e;
             border: none;
             padding: 10px;
@@ -80,22 +86,21 @@
 
         @media (max-width: 768px) {
             h1 {
-                font-size: 1.3em; /* Further reduce heading size on smaller screens */
+                font-size: 1.3em;
             }
 
             input, select, button {
-                font-size: 0.9em; /* Adjust font size for smaller screens */
-                padding: 12px; /* Slightly smaller padding on small devices */
+                font-size: 0.9em;
+                padding: 12px;
             }
 
             #map {
-                height: 75vh; /* Use more screen height for the map on mobile */
+                height: 100vh;
             }
         }
     </style>
 </head>
 <body>
-   
     <div id="map"></div> <!-- Leaflet map will be rendered here -->
 
     <script>
@@ -103,12 +108,23 @@
         const CACHE_KEY = 'geojson_features';
         const API_URL = 'https://databaseapi-t454.onrender.com/features'; // Updated API URL
 
+        // Dynamically adjust map height to account for browser toolbars
+        function adjustMapHeight() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+            document.getElementById('map').style.height = `${window.innerHeight}px`;
+        }
+
+        // Call the adjust function on load and resize
+        window.addEventListener('load', adjustMapHeight);
+        window.addEventListener('resize', adjustMapHeight);
+
         // Initialize the Leaflet map with Google Earth Hybrid as the base layer
         var map = L.map('map', {
             center: [10.5264, 7.4386], // Initial coordinates
             zoom: 14,
             tap: true, // Enables tap interaction for touch devices
-            tapTolerance: 10 // Optional, adjusts tolerance for touch precision
+            tapTolerance: 10
         });
 
         // Google Earth Hybrid layer (Direct Tile URL approach)
@@ -130,11 +146,9 @@
         function loadGeoJsonData(data) {
             // Loop through each feature in the JSON data and plot on the map
             data.forEach((layer, index) => {
-                // Extract coordinates and create a marker
                 const coordinates = layer.geometry.coordinates;
                 const marker = L.marker([coordinates[1], coordinates[0]]).addTo(map);
 
-                // Dynamically generate an editable form popup content
                 let popupContent = `<form id="edit-form-${index}">`;
                 for (let property in layer.properties) {
                     popupContent += `<label for="${property}"><b>${property}</b>:</label><br>`;
@@ -142,25 +156,20 @@
                 }
                 popupContent += `<button type="submit">Save</button></form>`;
 
-                // Add a click event to the marker to show the popup
                 marker.bindPopup(popupContent);
 
-                // Handle form submission to update the properties
                 marker.on('popupopen', function () {
                     const form = document.getElementById(`edit-form-${index}`);
                     form.addEventListener('submit', function (event) {
                         event.preventDefault();
 
-                        // Collect updated data from the form
                         const updatedProperties = {};
                         for (let property in layer.properties) {
                             updatedProperties[property] = form.elements[property].value;
                         }
 
-                        // Update the feature properties in the database via the API
                         updateFeatureInDatabase(layer._id, updatedProperties);
 
-                        // Update the marker's popup content with the new values
                         let updatedPopupContent = `<b>Coordinates:</b> [${coordinates[1]}, ${coordinates[0]}]<br>`;
                         for (let property in updatedProperties) {
                             updatedPopupContent += `<b>${property}:</b> ${updatedProperties[property]}<br>`;
@@ -171,13 +180,10 @@
             });
         }
 
-        // Function to send the updated feature to the API
         function updateFeatureInDatabase(id, updatedProperties) {
             fetch(`${API_URL}/${id}`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ properties: updatedProperties })
             })
             .then(response => response.json())
@@ -190,13 +196,12 @@
             });
         }
 
-        // Function to fetch data from the API and cache it
         function fetchDataAndCache() {
             fetch(API_URL)
                 .then(response => response.json())
                 .then(data => {
-                    localStorage.setItem(CACHE_KEY, JSON.stringify(data)); // Cache the data
-                    localStorage.setItem(CACHE_KEY + '_timestamp', new Date().getTime()); // Cache the timestamp
+                    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+                    localStorage.setItem(CACHE_KEY + '_timestamp', new Date().getTime());
                     loadGeoJsonData(data);
                 })
                 .catch(error => {
@@ -204,37 +209,27 @@
                 });
         }
 
-        // Main logic: Check if the data is already cached and valid
         if (isCacheValid()) {
             const cachedData = JSON.parse(localStorage.getItem(CACHE_KEY));
-            loadGeoJsonData(cachedData); // Load data from cache
+            loadGeoJsonData(cachedData);
         } else {
-            fetchDataAndCache(); // Fetch data from API and cache it
+            fetchDataAndCache();
         }
 
-        // Function to add the user's current location to the map
         function addUserLocation() {
-            map.locate({ setView: true, maxZoom: 16 }); // Automatically pan to user's location
-
-            // Event listener when location is found
+            map.locate({ setView: true, maxZoom: 16 });
             map.on('locationfound', function (e) {
-                var radius = e.accuracy / 2;
-
-                // Add marker for user's location
+                const radius = e.accuracy / 2;
                 L.marker(e.latlng).addTo(map)
                     .bindPopup("You are within " + radius + " meters from this point").openPopup();
-
-                // Add a circle to indicate the accuracy of the location
                 L.circle(e.latlng, radius).addTo(map);
             });
 
-            // Event listener when location is not found
             map.on('locationerror', function () {
                 alert("Unable to find your location.");
             });
         }
 
-        // Call the function to add the user's location to the map
         addUserLocation();
 
     </script>
