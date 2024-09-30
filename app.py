@@ -9,7 +9,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Path to the JSON file in the root directory
-JSON_FILE_PATH = os.path.join(os.path.dirname(__file__), 'kaduna_piipeline.json')
+JSON_FILE_PATH = os.path.join(os.path.dirname(__file__), 'kaduna_pipeline.json')
 
 # Helper function to load the JSON data from file
 def load_json_data():
