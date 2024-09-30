@@ -6,8 +6,6 @@
     <title>Field Worker</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <!-- Font Awesome CDN for the icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
         /* General Dark Theme with Lemon Accents */
         body {
@@ -29,6 +27,7 @@
             width: 100%;
             height: 90vh; /* 90% of the viewport height for the map */
             margin-bottom: 15px;
+            border: 2px solid #f4f4f4;
         }
 
         input, select, button {
@@ -85,12 +84,6 @@
             background-color: #d4d400;
         }
 
-        /* Custom styling for Font Awesome icons */
-        .fa {
-            color: #e5e500; /* Lemon accent for icons */
-            font-size: 24px; /* Adjust the icon size */
-        }
-
         @media (max-width: 768px) {
             h1 {
                 font-size: 1.3em; /* Further reduce heading size on smaller screens */
@@ -102,7 +95,7 @@
             }
 
             #map {
-                height: 90vh; /* Keep the map height at 90% of viewport */
+                height: 75vh; /* Use more screen height for the map on mobile */
             }
         }
     </style>
@@ -115,40 +108,6 @@
         const CACHE_EXPIRATION = 3600000; // 1 hour (in milliseconds)
         const CACHE_KEY = 'geojson_features';
         const API_URL = 'https://databaseapi-t454.onrender.com/features'; // Updated API URL
-
-        // Custom icons for different feature types using Font Awesome
-        const icons = {
-            'Compressor Station': L.divIcon({
-                html: '<i class="fa-solid fa-compress"></i>',
-                className: 'compressor-icon',
-                iconSize: [32, 32],
-            }),
-            'Pump Station': L.divIcon({
-                html: '<i class="fa-solid fa-compress"></i>',
-                className: 'compressor-icon',
-                iconSize: [32, 32],
-            }),
-            'Inspection Point': L.divIcon({
-                html: '<i class="fa-solid fa-compress"></i>',
-                className: 'compressor-icon',
-                iconSize: [32, 32],
-            }),
-            'Monitoring Station': L.divIcon({
-                html: '<i class="fa-solid fa-compress"></i>',
-                className: 'compressor-icon',
-                iconSize: [32, 32],
-            }),
-            'Valve Station': L.divIcon({
-                html: '<i class="fa-solid fa-compress"></i>',
-                className: 'compressor-icon',
-                iconSize: [32, 32],
-            }),
-            'Cathodic Prevention Station': L.divIcon({
-                html: '<i class="fa-solid fa-compress"></i>',
-                className: 'compressor-icon',
-                iconSize: [32, 32],
-            })
-        };
 
         // Initialize the Leaflet map with Google Earth Hybrid as the base layer
         var map = L.map('map', {
@@ -179,10 +138,7 @@
             data.forEach((layer, index) => {
                 // Extract coordinates and create a marker
                 const coordinates = layer.geometry.coordinates;
-                const featureType = layer.properties["Feature Type"];
-                const icon = icons[featureType] || L.Icon.Default; // Use custom icon if available
-
-                const marker = L.marker([coordinates[1], coordinates[0]], { icon: icon }).addTo(map);
+                const marker = L.marker([coordinates[1], coordinates[0]]).addTo(map);
 
                 // Dynamically generate an editable form popup content
                 let popupContent = `<form id="edit-form-${index}">`;
@@ -287,6 +243,19 @@
         // Call the function to add the user's location to the map
         addUserLocation();
 
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js').then(function(registration) {
+            console.log('Service Worker registered with scope: ', registration.scope);
+          }, function(error) {
+            console.log('Service Worker registration failed: ', error);
+          });
+        });
+      }
     </script>
 </body>
 </html>
