@@ -6,6 +6,13 @@
     <title>Field Worker</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <!-- Leaflet Measure -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-measure/dist/leaflet-measure.css" />
+    <script src="https://unpkg.com/leaflet-measure/dist/leaflet-measure.js"></script>
+    <!-- Leaflet Draw -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+
     <style>
         /* General Dark Theme with Lemon Accents */
         body, html {
@@ -107,6 +114,41 @@
         const CACHE_EXPIRATION = 3600000; // 1 hour (in milliseconds)
         const CACHE_KEY = 'geojson_features';
         const API_URL = 'https://databaseapi-t454.onrender.com/features'; // Updated API URL
+
+        // Initialize the Measure tool
+        var measureControl = new L.Control.Measure({
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares',
+            activeColor: '#e5e500',
+            completedColor: '#e5e500'
+        });
+        measureControl.addTo(map);
+
+        // Initialize the Draw tool
+        var drawnItems = new L.FeatureGroup();
+        map.addLayer(drawnItems);
+        var drawControl = new L.Control.Draw({
+            edit: {
+                featureGroup: drawnItems
+            }
+        });
+        map.addControl(drawControl);
+
+        // Handle Draw events
+        map.on(L.Draw.Event.CREATED, function (event) {
+            var layer = event.layer;
+            drawnItems.addLayer(layer);
+        });
+
+        map.on(L.Draw.Event.EDITED, function (event) {
+            var layers = event.layers;
+            layers.eachLayer(function (layer) {
+                console.log(layer);
+            });
+        });
+
 
         // Dynamically adjust map height to account for browser toolbars
         function adjustMapHeight() {
