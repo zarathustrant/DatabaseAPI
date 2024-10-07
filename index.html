@@ -115,39 +115,6 @@
         const CACHE_KEY = 'geojson_features';
         const API_URL = 'https://databaseapi-t454.onrender.com/features'; // Updated API URL
 
-        // Initialize the Measure tool
-        var measureControl = new L.Control.Measure({
-            primaryLengthUnit: 'meters',
-            secondaryLengthUnit: 'kilometers',
-            primaryAreaUnit: 'sqmeters',
-            secondaryAreaUnit: 'hectares',
-            activeColor: '#e5e500',
-            completedColor: '#e5e500'
-        });
-        measureControl.addTo(map);
-
-        // Initialize the Draw tool
-        var drawnItems = new L.FeatureGroup();
-        map.addLayer(drawnItems);
-        var drawControl = new L.Control.Draw({
-            edit: {
-                featureGroup: drawnItems
-            }
-        });
-        map.addControl(drawControl);
-
-        // Handle Draw events
-        map.on(L.Draw.Event.CREATED, function (event) {
-            var layer = event.layer;
-            drawnItems.addLayer(layer);
-        });
-
-        map.on(L.Draw.Event.EDITED, function (event) {
-            var layers = event.layers;
-            layers.eachLayer(function (layer) {
-                console.log(layer);
-            });
-        
 
 
         // Dynamically adjust map height to account for browser toolbars
@@ -274,6 +241,41 @@
 
         addUserLocation();
 
+        // Initialize the Measure tool
+        var measureControl = new L.Control.Measure({
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares',
+            activeColor: '#e5e500',
+            completedColor: '#e5e500'
+        });
+        measureControl.addTo(map);
+
+        // Initialize the Draw tool
+        var drawnItems = new L.FeatureGroup();
+        map.addLayer(drawnItems);
+        var drawControl = new L.Control.Draw({
+            edit: {
+                featureGroup: drawnItems
+            }
+        });
+        map.addControl(drawControl);
+
+        // Handle Draw events
+        map.on(L.Draw.Event.CREATED, function (event) {
+            var layer = event.layer;
+            drawnItems.addLayer(layer);
+        });
+
+        map.on(L.Draw.Event.EDITED, function (event) {
+            var layers = event.layers;
+            layers.eachLayer(function (layer) {
+                console.log(layer);
+            });
+        });
+
+
     </script>
 
     <!-- Service Worker Registration -->
@@ -287,6 +289,9 @@
           });
         });
       }
+
+
+    
     </script>
 </body>
 </html>
