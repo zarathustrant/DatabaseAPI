@@ -12,6 +12,8 @@
     <!-- Leaflet Draw -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+    <!-- Font Awesome for Pencil Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
     <style>
         /* General Dark Theme with Lemon Accents */
@@ -91,6 +93,20 @@
             background-color: #d4d400;
         }
 
+        /* Style for the Pencil Icon Control */
+        .leaflet-control-custom {
+            background-color: #f4f4f4;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        .leaflet-control-custom i {
+            font-size: 20px;
+            color: #1c1c1e;
+            padding: 7px;
+        }
+
         @media (max-width: 768px) {
             h1 {
                 font-size: 1.3em;
@@ -109,17 +125,11 @@
 </head>
 <body>
     <div id="map"></div> <!-- Leaflet map will be rendered here -->
-    <!-- Button to toggle the drawing tools -->
-    <button id="toggleDraw" style="position: absolute; top: 60px; right: 20px; z-index: 1000;">
-        Toggle Drawing Tools
-    </button>
 
     <script>
         const CACHE_EXPIRATION = 3600000; // 1 hour (in milliseconds)
         const CACHE_KEY = 'geojson_features';
         const API_URL = 'https://databaseapi-t454.onrender.com/features'; // Updated API URL
-
-
 
         // Dynamically adjust map height to account for browser toolbars
         function adjustMapHeight() {
@@ -128,15 +138,14 @@
             document.getElementById('map').style.height = `${window.innerHeight}px`;
         }
 
-        // Call the adjust function on load and resize
         window.addEventListener('load', adjustMapHeight);
         window.addEventListener('resize', adjustMapHeight);
 
-        // Initialize the Leaflet map with Google Earth Hybrid as the base layer
+        // Initialize the map
         var map = L.map('map', {
-            center: [10.5264, 7.4386], // Initial coordinates
+            center: [10.5264, 7.4386],
             zoom: 14,
-            tap: true, // Enables tap interaction for touch devices
+            tap: true,
             tapTolerance: 10
         });
 
@@ -145,7 +154,25 @@
             attribution: '&copy; <a href="https://www.google.com/earth/">Google Earth</a>',
             subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
             maxZoom: 19
-        }).addTo(map); // Add the layer to the map
+        });
+
+        // CartoDB Light Basemap
+        var cartoDBLight = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://carto.com/">CartoDB</a>',
+            maxZoom: 19
+        });
+
+        // Define base layers for switching
+        var baseLayers = {
+            "Google Earth Hybrid": googleSatHybrid,
+            "CartoDB Light": cartoDBLight
+        };
+
+        // Add the base layer control to the map
+        L.control.layers(baseLayers).addTo(map);
+
+        // Initialize the map with Google Earth Hybrid as the default
+        googleSatHybrid.addTo(map);
 
         // Function to check if the data in localStorage is valid
         function isCacheValid() {
@@ -155,9 +182,7 @@
             return (new Date().getTime() - cacheTime) < CACHE_EXPIRATION;
         }
 
-        // Function to load GeoJSON data and display it on the map
         function loadGeoJsonData(data) {
-            // Loop through each feature in the JSON data and plot on the map
             data.forEach((layer, index) => {
                 const coordinates = layer.geometry.coordinates;
                 const marker = L.marker([coordinates[1], coordinates[0]]).addTo(map);
@@ -264,9 +289,8 @@
                 featureGroup: drawnItems
             }
         });
-        map.addControl(drawControl);
-        
-         // Boolean variable to track visibility
+
+        // Boolean variable to track visibility
         let drawControlVisible = false;
 
         // Function to toggle the draw control
@@ -280,8 +304,32 @@
             }
         }
 
-        // Event listener for the toggle button
-        document.getElementById("toggleDraw").addEventListener("click", toggleDrawControl);
+        // Custom control for pencil icon beneath the zoom buttons
+        var PencilControl = L.Control.extend({
+            options: {
+                position: 'topleft' // Position it below the zoom buttons
+            },
+            onAdd: function(map) {
+                var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+
+                container.innerHTML = '<i class="fas fa-pencil-alt"></i>';
+                container.style.backgroundColor = '#f4f4f4';
+                container.style.color = '#1c1c1e';
+                container.style.width = '34px';
+                container.style.height = '34px';
+                container.style.border = '1px solid #ddd';
+                container.style.borderRadius = '5px';
+
+                container.onclick = function() {
+                    toggleDrawControl(); // Call the function to toggle drawing tools
+                };
+
+                return container;
+            }
+        });
+
+        // Add the custom pencil control to the map
+        map.addControl(new PencilControl());
 
         // Handle Draw events
         map.on(L.Draw.Event.CREATED, function (event) {
@@ -295,8 +343,6 @@
                 console.log(layer);
             });
         });
-
-
     </script>
 
     <!-- Service Worker Registration -->
@@ -310,9 +356,6 @@
           });
         });
       }
-
-
-    
     </script>
 </body>
 </html>
