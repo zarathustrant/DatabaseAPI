@@ -254,21 +254,54 @@
             fetchDataAndCache();
         }
 
-        function addUserLocation() {
-            map.locate({ setView: true, maxZoom: 16 });
-            map.on('locationfound', function (e) {
-                const radius = e.accuracy / 2;
-                L.marker(e.latlng).addTo(map)
-                    .bindPopup("You are within " + radius + " meters from this point").openPopup();
-                L.circle(e.latlng, radius).addTo(map);
-            });
+        // Custom user icon: a circle with a triangle (direction pointer)
+        var userIcon = L.divIcon({
+            className: 'user-marker',
+            iconSize: [20, 20]
+        });
 
-            map.on('locationerror', function () {
-                alert("Unable to find your location.");
-            });
+        let userMarker, userCircle, headingAngle = 0;
+
+        // Function to update user's position and rotation of marker
+        function updateUserPosition(latlng, heading) {
+            if (!userMarker) {
+                userMarker = L.marker(latlng, { icon: userIcon }).addTo(map);
+                userCircle = L.circle(latlng, { radius: 20, color: '#e5e500' }).addTo(map);
+            } else {
+                userMarker.setLatLng(latlng);
+                userCircle.setLatLng(latlng);
+            }
+
+            // Rotate the triangle according to heading
+            const triangle = userMarker.getElement().querySelector(':after');
+            triangle.style.transform = `rotate(${heading}deg)`;
         }
 
-        addUserLocation();
+        // Handle location found event
+        map.on('locationfound', function(e) {
+            var latlng = e.latlng;
+            updateUserPosition(latlng, headingAngle);
+        });
+
+        // Track user location
+        function trackUserLocation() {
+            map.locate({ setView: true, maxZoom: 16, watch: true });
+        }
+
+        // Update heading based on device orientation
+        window.addEventListener('deviceorientation', function(event) {
+            if (event.absolute) {
+                headingAngle = event.alpha; // Get heading angle from the device
+            }
+        });
+
+        // Start tracking user's location
+        trackUserLocation();
+
+        // Handle location error
+        map.on('locationerror', function() {
+            alert("Unable to find your location.");
+        });
 
         // Initialize the Measure tool
         var measureControl = new L.Control.Measure({
