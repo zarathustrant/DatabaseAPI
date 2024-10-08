@@ -109,6 +109,10 @@
 </head>
 <body>
     <div id="map"></div> <!-- Leaflet map will be rendered here -->
+    <!-- Button to toggle the drawing tools -->
+    <button id="toggleDraw" style="position: absolute; top: 60px; right: 20px; z-index: 1000;">
+        Toggle Drawing Tools
+    </button>
 
     <script>
         const CACHE_EXPIRATION = 3600000; // 1 hour (in milliseconds)
@@ -261,6 +265,23 @@
             }
         });
         map.addControl(drawControl);
+        
+         // Boolean variable to track visibility
+        let drawControlVisible = false;
+
+        // Function to toggle the draw control
+        function toggleDrawControl() {
+            if (drawControlVisible) {
+                map.removeControl(drawControl);
+                drawControlVisible = false;
+            } else {
+                map.addControl(drawControl);
+                drawControlVisible = true;
+            }
+        }
+
+        // Event listener for the toggle button
+        document.getElementById("toggleDraw").addEventListener("click", toggleDrawControl);
 
         // Handle Draw events
         map.on(L.Draw.Event.CREATED, function (event) {
