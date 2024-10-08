@@ -280,6 +280,12 @@
         // Handle location found event
         map.on('locationfound', function(e) {
             var latlng = e.latlng;
+
+            // On the first location update, center the map on the user's position
+            if (firstLocationUpdate) {
+                map.setView(latlng, 16); // Set the zoom level to a reasonable value
+                firstLocationUpdate = false; // After the first update, stop centering the map
+            }
             updateUserPosition(latlng, headingAngle);
         });
 
